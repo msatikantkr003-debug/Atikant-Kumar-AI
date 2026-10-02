@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Atikant Kumar Super AI</title>
+  
+  <!-- Mobile & PWA Fullscreen Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Atikant AI">
+  <meta name="theme-color" content="#0b1120">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: #0b1120;
+      color: #f1f5f9;
+    }
+
+    /* Main App Layout */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      width: 100vw;
+      max-width: 650px;
+      margin: 0 auto;
+      background: #0f172a;
+      position: relative;
+    }
+
+    /* Top Navigation Bar */
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      z-index: 20;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+    }
+
+    .title-area h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.3px;
+    }
+
+    .title-area .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #10b981;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #334155;
+      border: none;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: #475569;
+    }
+
+    /* Quick Topic Badges */
+    .badges-scroll {
+      flex-shrink: 0;
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #141f36;
+      overflow-x: auto;
+      white-space: nowrap;
+      border-bottom: 1px solid #1e293b;
+      scrollbar-width: none;
+    }
+
+    .badges-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .badge-chip {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .badge-chip:active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    /* Chat Messages Box */
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      word-break: break-word;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-bot {
+      align-self: flex-start;
+      background: #1e293b;
+      color: #f1f5f9;
+      border: 1px solid #334155;
+      border-top-left-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: #ffffff;
+      border-top-right-radius: 4px;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 14px;
+      background: #1e293b;
+      border-radius: 14px;
+      width: fit-content;
+      border: 1px solid #334155;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    /* Fixed Bottom Action & Typing Bar */
+    .footer-section {
+      flex-shrink: 0;
+      background: #1e293b;
+      border-top: 1px solid #334155;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      z-index: 25;
+    }
+
+    .quick-prompts {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+
+    .quick-prompts::-webkit-scrollbar {
+      display: none;
+    }
+
+    .prompt-pill {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-size: 11.5px;
+      padding: 5px 11px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .prompt-pill:active {
+      color: #38bdf8;
+      border-color: #38bdf8;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-box {
+      flex: 1;
+      height: 46px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 24px;
+      padding: 0 16px;
+      color: #ffffff;
+      font-size: 14.5px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-box:focus {
+      border-color: #3b82f6;
+    }
+
+    .input-box::placeholder {
+      color: #64748b;
+    }
+
+    .send-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #2563eb;
+      border: none;
+      color: #ffffff;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.4);
+      transition: transform 0.15s, background-color 0.15s;
+    }
+
+    .send-btn:active {
+      transform: scale(0.92);
+      background: #1d4ed8;
+    }
+
+    /* Settings Modal */
+    .modal-backdrop {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: #1e293b;
+      border: 1px solid #475569;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .modal-header h3 {
+      font-size: 16px;
+      color: #f8fafc;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-body label {
+      display: block;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    .modal-input {
+      width: 100%;
+      height: 42px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 0 12px;
+      color: #ffffff;
+      font-size: 13.5px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .modal-save-btn {
+      width: 100%;
+      height: 42px;
+      background: #10b981;
+      border: none;
+      border-radius: 10px;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: absolute;
+      top: 65px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #334155;
+      color: #f8fafc;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 150;
+      border: 1px solid #475569;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="toast" class="toast">API Key Saved!</div>
+
+    <!-- Top Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="avatar">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div class="title-area">
+          <h1>Atikant Kumar Super AI</h1>
+          <div class="status">
+            <span class="status-dot"></span> Online & Ready
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="clearChat()" title="Clear Chat">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+        <button class="icon-btn" onclick="toggleSettings(true)" title="API Key Settings">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Category Chips -->
+    <div class="badges-scroll">
+      <div class="badge-chip" onclick="handleTopic('Study Helper')"><i class="fa-solid fa-graduation-cap"></i> Study / Solver</div>
+      <div class="badge-chip" onclick="handleTopic('Instagram Caption')"><i class="fa-brands fa-instagram"></i> Insta Captions</div>
+      <div class="badge-chip" onclick="handleTopic('Hindi Shayari')"><i class="fa-solid fa-heart"></i> Shayari / Love</div>
+      <div class="badge-chip" onclick="handleTopic('Coding Expert')"><i class="fa-solid fa-code"></i> Coding</div>
+      <div class="badge-chip" onclick="handleTopic('General Chat')"><i class="fa-solid fa-comments"></i> Open Chat</div>
+    </div>
+
+    <!-- Chat Messages Scroll Container -->
+    <main class="chat-body" id="chatBody">
+      <div class="message msg-bot">
+        Namaste! Main <strong>Atikant Kumar Super AI</strong> hoon. Koi bhi sawal, math problem, ya study help chahiye toh bina jhijhak puchiye!
+      </div>
+    </main>
+
+    <!-- Typing Indicator (Initially Hidden) -->
+    <div id="typingIndicator" class="typing-indicator" style="display: none; margin: 0 14px 10px;">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+    </div>
+
+    <!-- Fixed Bottom Typing Bar -->
+    <footer class="footer-section">
+      <div class="quick-prompts">
+        <span class="prompt-pill" onclick="sendQuick('Ohm\'s Law samjhao formula ke saath')">Ohm's Law formula</span>
+        <span class="prompt-pill" onclick="sendQuick('Photosynthesis process Hindi me samjhao')">Photosynthesis samjhao</span>
+        <span class="prompt-pill" onclick="sendQuick('Speed Time Distance formula kya hai?')">Speed Time Distance</span>
+        <span class="prompt-pill" onclick="sendQuick('Online paise kamane ke tareeqe')">Online Earning</span>
+      </div>
+      <div class="input-row">
+        <input 
+          type="text" 
+          id="userInput" 
+          class="input-box" 
+          placeholder="Yahan apna sawal likhiye..." 
+          autocomplete="off"
+          onkeydown="if(event.key === 'Enter') handleSend();"
+        />
+        <button class="send-btn" id="sendBtn" onclick="handleSend()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div class="modal-backdrop" id="settingsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Settings (Gemini API Key)</h3>
+          <button class="close-modal" onclick="toggleSettings(false)">&times;</button>
+        </div>
+        <div class="modal-body">
+          <label>Google Gemini API Key:</label>
+          <input type="password" id="apiKeyInput" class="modal-input" placeholder="AIzaSy...">
+          <p style="font-size: 11px; color: #94a3b8; margin-bottom: 14px; line-height: 1.4;">
+            Free API key pane ke liye: <strong>aistudio.google.com/apikey</strong> par jakar "Create API key" copy karein.
+          </p>
+          <button class="modal-save-btn" onclick="saveApiKey()">Save Key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById('chatBody');
+    const userInput = document.getElementById('userInput');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const settingsModal = document.getElementById('settingsModal');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const toast = document.getElementById('toast');
+
+    // Local Storage for API Key
+    let geminiApiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+    if (geminiApiKey) {
+      apiKeyInput.value = geminiApiKey;
+    }
+
+    function toggleSettings(show) {
+      settingsModal.style.display = show ? 'flex' : 'none';
+      if (show) apiKeyInput.value = geminiApiKey;
+    }
+
+    function showToast(msg) {
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2200);
+    }
+
+    function saveApiKey() {
+      const val = apiKeyInput.value.trim();
+      if (!val) {
+        alert("Kripya valid API key enter kijiye!");
+        return;
+      }
+      geminiApiKey = val;
+      localStorage.setItem('GEMINI_API_KEY', val);
+      toggleSettings(false);
+      showToast("API Key successfully save ho gayi!");
+    }
+
+    function appendMessage(text, isUser = false) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${isUser ? 'msg-user' : 'msg-bot'}`;
+      msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+      chatBody.appendChild(msgDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      return msgDiv;
+    }
+
+    function clearChat() {
+      if (confirm("Kya aap saari chat clear karna chahte hain?")) {
+        chatBody.innerHTML = `
+          <div class="message msg-bot">
+            Namaste! Main <strong>Atikant Kumar Super AI</strong> hoon. Koi bhi sawal puchiye!
+          </div>
+        `;
+      }
+    }
+
+    function sendQuick(text) {
+      userInput.value = text;
+      handleSend();
+    }
+
+    function handleTopic(topic) {
+      userInput.value = `${topic} ke bare me bataiye: `;
+      userInput.focus();
+    }
+
+    // Direct offline fallbacks for essential queries
+    function getOfflineKnowledge(prompt) {
+      const p = prompt.toLowerCase();
+      if (p.includes("ohm") || p.includes("ohms")) {
+        return "⚡ **Ohm's Law:**\n\nFormula: **V = I × R**\n\n• **V** = Voltage (Volts)\n• **I** = Current (Amperes)\n• **R** = Resistance (Ohms)\n\nIsko simple shabdo me kahein toh: Kisi conductor me behne wala current uske do siro ke beech ke voltage ke direct proportional hota hai.";
+      }
+      if (p.includes("photosynthesis")) {
+        return "🌱 **Photosynthesis (Prakash Sanshleshan):**\n\nPaudhe suraj ki roshni, paani ($H_2O$), aur carbon dioxide ($CO_2$) ka upayog karke apna bhojan (Glucose) banate hain aur oxygen release karte hain.\n\n**Formula:**\n6CO₂ + 6H₂O + Sunlight → C₆H₁₂O₆ + 6O₂";
+      }
+      if (p.includes("speed time") || p.includes("distance formula")) {
+        return "🚗 **Speed, Distance & Time Formulas:**\n\n• **Speed** = Distance ÷ Time\n• **Distance** = Speed × Time\n• **Time** = Distance ÷ Speed";
+      }
+      if (p.includes("kaise ho") || p.includes("namaste") || p.includes("hello")) {
+        return "Namaste! Main **Atikant Kumar Super AI** hoon, bilkul badhiya aur aapki madad ke liye taiyar hoon! Aap kya seekhna ya poochna chahte hain?";
+      }
+      return null;
+    }
+
+    async function handleSend() {
+      const query = userInput.value.trim();
+      if (!query) return;
+
+      appendMessage(query, true);
+      userInput.value = '';
+
+      // Check instant built-in offline answer
+      const offlineAnswer = getOfflineKnowledge(query);
+
+      typingIndicator.style.display = 'flex';
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // If user provided custom Gemini API Key, query Google Gemini live
+      if (geminiApiKey) {
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{ 
+                  text: "You are 'Atikant Kumar Super AI', an intelligent, polite, and helpful assistant. Respond accurately in clear, simple Hinglish or Hindi as requested. User query: " + query 
+                }]
+              }]
+            })
+          });
+
+          const data = await response.json();
+          typingIndicator.style.display = 'none';
+
+          if (data && data.candidates && data.candidates[0].content.parts[0].text) {
+            appendMessage(data.candidates[0].content.parts[0].text);
+            return;
+          } else {
+            console.warn("API response empty, falling back");
+          }
+        } catch (err) {
+          console.error("Gemini API Error: ", err);
+        }
+      }
+
+      // If no API key or API call completes, handle intelligently
+      setTimeout(() => {
+        typingIndicator.style.display = 'none';
+        if (offlineAnswer) {
+          appendMessage(offlineAnswer);
+        } else if (!geminiApiKey) {
+          appendMessage(
+            "Main aapke sawal ka jawab dene ke liye taiyar hoon! 🚀\n\nUnlimited live AI responses ke liye upar ⚙️ **Settings** icon par dabakar apni free **Gemini API Key** daal dijiye.\n\n*(Free key lene ke liye: **aistudio.google.com/apikey** par login karein)*"
+          );
+        } else {
+          appendMessage("Kripya apna internet connection ya API Key check kijiye.");
+        }
+      }, 700);
+    }
+  </script>
+</body>
+</html>
